@@ -5,7 +5,7 @@ Automation with ansible of sample LAMP installation &amp; configuration for "kod
 
 # Introduction
 
-This is automation with ansible of a sample e-commerce application built for learning purposes forked from "kodekloudhub/learning-app-ecommerce".
+This is automation with ansible of a sample e-commerce application built for learning purposes forked from [kodekloudhub/learning-app-ecommerce](https://github.com/kodekloudhub/learning-app-ecommerce).
 
 Here's how to deploy it on CentOS systems with Docker containers:
 
