@@ -1,0 +1,1 @@
+< target_node_name > ansible_host=< target_node_ip > ansible_connection=ssh ansible_user=< user_name > ansible_ssh_pass= < user_password >
