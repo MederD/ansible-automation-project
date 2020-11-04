@@ -12,7 +12,7 @@ Here's how to deploy it on CentOS systems with Docker containers:
 
 ## Deploy Pre-Requisites
 
-1. Install Docker with systemd. I used "centos/systemd" image and build my own with a little modifications by enabling ssh, then run it:
+1. Install Docker with systemd. I used [centos/systemd](https://hub.docker.com/r/centos/systemd/) image and build my own with a little modifications by enabling ssh, then run it:
 
 ```
 sudo docker run --privileged --name < target_node_name > --hostname < target_node_hostname > -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p < example_port >:22 -d  < modified_image_name >
