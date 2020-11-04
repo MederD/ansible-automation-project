@@ -1,6 +1,6 @@
 # Ansible-automation-project
 
-Automation with ansible of sample LAMP installation &amp; configuration for "kodekloudhub/learning-app-ecommerce"
+Automation with ansible of sample LAMP installation &amp; configuration for [kodekloudhub/learning-app-ecommerce](https://github.com/kodekloudhub/learning-app-ecommerce).
 
 
 # Introduction
