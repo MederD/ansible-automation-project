@@ -1,11 +1,10 @@
 - name: 'Automation of a sample e-commerce application built for learning purposes.'
   hosts: target_node_name
   become: true
+  roles:
+          - web
+          - mysql_db
   tasks:
-          
-          - include: tasks/deploy_web.yaml
-          - include: tasks/deploy.yaml
-          
 
           - name: Creating a file with content
             copy:
