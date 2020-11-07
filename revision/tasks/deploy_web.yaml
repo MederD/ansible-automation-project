@@ -29,16 +29,4 @@
  - name: 'firewalld reload again'
    command: firewall-cmd --reload
             
- - name: 'Change httpd.conf file' 
-   shell: sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf
-           
- - name: 'Start and enable httpd'
-   service: 
-       name: httpd 
-       state: started
-       enabled: yes
-          
- - name: 'Installing git'
-   yum:
-       name: git
-   become: true
+ 
