@@ -1,0 +1,105 @@
+- name: 'Automation of a sample e-commerce application built for learning purposes.'
+  hosts: target_node_name
+  become: true
+  tasks:
+          - name: 'Install firewalld'
+            yum: 
+               name=firewalld 
+               state=latest
+            become: true
+
+          - name: 'Firewalld start'
+            service: name=firewalld state=started enabled=yes
+
+          - name: 'Add firewalld port'
+            command: firewall-cmd --permanent --zone=public --add-port=3306/tcp
+
+          - name: 'firewalld reload'
+            command: firewall-cmd --reload
+  
+          - name: 'Install mariadb'
+            yum: 
+               name=mariadb-server
+               state=latest
+            become: true
+          
+          - name: 'mariadb start'
+            service: name=mariadb state=started enabled=yes
+
+          - name: 'installing python-3 mysql libraries'
+            yum: name=MySQL-python state=present
+          
+          - name: 'create mariadb database'
+            mysql_db:
+              name: ecomdb
+              state: present
+
+          - name: Create database user with password and all database privileges and 'WITH GRANT OPTION'
+            mysql_user:
+              name: ecomuser
+              password: ecompassword
+              priv: '*.*:ALL,GRANT'
+              state: present
+
+          - name: Reload privilege tables
+            command: 'mysql -ne "{{ item }}"'
+            with_items:
+               - FLUSH PRIVILEGES
+            changed_when: False
+
+          - name: Creating a file with content
+            copy:
+              dest: "/home/db-load-script.sql"
+              content: |
+                USE ecomdb;
+                CREATE TABLE products (id mediumint(8) unsigned NOT NULL auto_increment,Name varchar(255) default NULL,Price varchar(255) default NULL, ImageUrl varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1;
+
+                INSERT INTO products (Name,Price,ImageUrl) VALUES ("Laptop","100","c-1.png"),("Drone","200","c-2.png"),("VR","300","c-3.png"),("Tablet","50","c-5.png"),("Watch","90","c-6.png"),("Phone Covers","20","c-7.png"),("Phone","80","c-8.png"),("Laptop","150","c-4.png");
+
+          - name: 'load db script'
+            shell: mysql < /home/db-load-script.sql
+            ignore_errors: yes
+            when: result.changed
+
+          - name: 'Gather package facts'
+            package_facts:
+              manager: rpm
+
+          - name: 'Install httpd php php-mysql'
+            yum:
+              name: '{{item}}'
+              state: present
+            loop:
+              - httpd
+              - php
+              - php-mysql
+            when: '"httpd" not in ansible_facts.packages'
+
+          - name: 'Add port 80 to firewalld'
+            command: firewall-cmd --permanent --zone=public --add-port=80/tcp
+
+          - name: 'firewalld reload again'
+            command: firewall-cmd --reload
+            
+          - name: 'Change httpd.conf file' 
+            shell: sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf
+           
+          - name: 'Start and enable httpd'
+            service: name=httpd state=started enabled=yes
+          
+          - name: 'Installing git'
+            yum:
+              name=git
+            become: true
+
+          - name: 'check if git clone exist'
+            stat:
+              path: /var/www/html/README.md
+            register: git_exists
+
+          - name: 'clone git repo'
+            command: git clone https://github.com/kodekloudhub/learning-app-ecommerce.git /var/www/html/
+            when: git_exists.stat.exists == False
+
+          - name: 'change index.php'
+            shell: sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php
